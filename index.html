@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Document</title>
+  </head>
+  <body>
+    <form action="#" method="post">
+      <input type="text" id="search">
+      <button type="submit" class="getImageButton">get new image</button>
+    </form>
+    
+    <img src="#" alt=""/>
+    <script>
+      const searchInput = document.querySelector("#search");
+      const getImageButton = document.querySelector(".getImageButton");
+
+      getImageButton.addEventListener("click", (e) => {
+        e.preventDefault();
+        const searchValue = searchInput.value;
+        searchInput.value = "";
+        const img = document.querySelector("img");
+        fetch(
+          `https://api.giphy.com/v1/gifs/translate?api_key=NXnIWDAYjvO47OEb58eZBQqRdBvfhMNv&s=${searchValue}`,
+          { mode: "cors" }
+        )
+          .then(function (response) {
+            console.log(response);
+            if (!response.ok) {
+              console.log("Not Successful");
+              
+              throw new Error(`HTTP error! status: ${response.status}`);
+            }else {
+              if (response.status === 200) {
+                console.log("status code 200");
+              }
+              console.log("successful");
+            }
+            return response.json();
+          })
+          .then(function (response) {
+
+            console.log("response.data");
+            console.log(response.data);
+            if(!response.data) {
+              console.log("Empty data array!");
+            }
+
+            console.log(response.data.url);
+            console.log(response.data.title);
+            if (!response.data.url.includes(searchValue) && !response.data.title.includes(searchValue)) {
+              throw new Error("response image doesn't match with the requested one!");
+            }
+
+
+            img.src = response.data.images.original.url;
+          })
+          .then(() => {
+
+          })
+          .catch(error => {
+            console.log('Fetch error: ', error);
+          });
+      });
+    </script>
+  </body>
+</html>
